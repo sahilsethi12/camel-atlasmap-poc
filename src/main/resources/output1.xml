@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="output.xsd">
+  <methodName>methodName</methodName>
+  <params>
+    <value>
+      <struct>
+        <member>
+          <name>name</name>
+          <value>
+            <boolean>0</boolean>
+            <dateTimeiso8601>dateTimeiso8601</dateTimeiso8601>
+            <array>
+              <data>
+                <value>
+                  <i4>0</i4>
+                </value>
+              </data>
+            </array>
+            <string>string</string>
+            <i4>0</i4>
+          </value>
+        </member>
+      </struct>
+    </value>
+  </params>
+</methodCall>

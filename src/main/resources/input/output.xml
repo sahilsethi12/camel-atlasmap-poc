@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ns:XmlOE xmlns:ns="http://atlasmap.io/xml/test/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ns:Address>
+        <ns:addressLine1>1040 Notexisting St</ns:addressLine1>
+        <ns:city>Westford</ns:city>
+        <ns:state>Massachusetts</ns:state>
+        <ns:zipCode>01886</ns:zipCode>
+    </ns:Address>
+    <ns:Contact>
+        <ns:firstName>Bob</ns:firstName>
+        <ns:lastName>Totton</ns:lastName>
+        <ns:phoneNumber>123-456-7890</ns:phoneNumber>
+        <ns:zipCode>01886</ns:zipCode>
+    </ns:Contact>
+    <ns:orderId>O001</ns:orderId>
+</ns:XmlOE>

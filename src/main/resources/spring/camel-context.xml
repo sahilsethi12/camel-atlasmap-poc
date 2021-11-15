@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:cxf="http://camel.apache.org/schema/cxf"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <!-- Importing Routes from XMLS -->
+    <import resource="camel-saga-implementation.xml"/>
+    <import resource="camel-mock-endpoints.xml"/>
+    <!-- Defining CamelServlet -->
+    <bean
+        class="org.apache.camel.component.servlet.CamelHttpTransportServlet" id="camelHttpTransportServlet"/>
+    <bean
+        class="org.springframework.boot.web.servlet.ServletRegistrationBean" id="servlet">
+        <property name="name" value="CamelServlet"/>
+        <property name="servlet" ref="camelHttpTransportServlet"/>
+    </bean>
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <routeContextRef ref="camelsagaimplementation"/>
+        <routeContextRef ref="camelmockendpoints"/>
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <handled>
+                <constant>false</constant>
+            </handled>
+            <log message="In Exception Block and Exception is ${exception.message} for ROUTE ${routeId}"/>
+        </onException>
+        <restConfiguration component="servlet"/>
+        <rest id="rest" path="/test">
+            <post id="transformData" uri="/trasnformdata">
+                <to uri="direct:validateandtrasnformdata"/>
+            </post>
+            <get id="booktickets" uri="/booktickets">
+                <to uri="direct:booktickets"/>
+            </get>
+            <!-- Endpoint for Booking of Train -->
+            <post id="booktrain" uri="/booktrain">
+                <to uri="direct:booktrain"/>
+            </post>
+            <!-- Endpoint for Booking of Plane -->
+            <post id="booktrain" uri="/bookplane">
+                <to uri="direct:bookplane"/>
+            </post>
+            <!-- Endpoint for Booking of Plane -->
+            <post id="payment" uri="/payment">
+                <to uri="direct:payment"/>
+            </post>
+        </rest>
+        <route id="_route1">
+            <from id="_from1" uri="direct:validateandtrasnformdata"/>
+            <choice id="_choice1">
+                <when id="_when1">
+                    <simple>${header.Content-Type} == 'application/xml'</simple>
+                    <log id="_log4" message="In Application/Xml content type Hence Calling the xmltojson route"/>
+                    <to id="_to2" uri="direct:transformxmltojson"/>
+                </when>
+                <when id="_when2">
+                    <simple>${header.Content-Type} == 'application/json'</simple>
+                    <log id="_log5" message="In Application/json content type Hence Calling the jsontoxml route"/>
+                    <to id="_to3" uri="direct:transformjsontoxml"/>
+                </when>
+            </choice>
+        </route>
+        <!--Route to Transform XMl to JSON-->
+        <route id="transformxmltojson">
+            <from id="_from2" uri="direct:transformxmltojson"/>
+            <!-- <to uri="language:constant:resource:classpath:input/request.xml" />-->
+            <log id="_log1" message="In Route Block for ROUTE ${routeId} "/>
+            <log id="_log2" message="The In  Body is ${body}"/>
+            <to id="_to1" uri="atlas:classpath:atlasmap-mapping-xmljson.adm"/>
+            <!--<to id="_to1" uri="atlas:file:/Users/sahilsethi/poc/camel-AtlasMap-poc/src/main/resources/atlasmap-mapping-demo.adm"/> -->
+            <log id="_log3" message="The Out Body is ${body}"/>
+        </route>
+        <!--Route to Transform JSON to XML-->
+        <route id="transformjsontoxml">
+            <from id="_from3" uri="direct:transformjsontoxml"/>
+            <log id="_log11" message="In Route Block for ROUTE ${routeId} "/>
+            <log id="_log21" message="The In  Body is ${body}"/>
+            <to id="_to11" uri="atlas:classpath:atlasmap-mapping-customtrans.adm"/>
+            <!--<to id="_to1" uri="atlas:file:/Users/sahilsethi/poc/camel-AtlasMap-poc/src/main/resources/atlasmap-mapping-demo.adm"/> -->
+            <log id="_log31" message="The Out Body is ${body}"/>
+        </route>
+    </camelContext>
+</beans>

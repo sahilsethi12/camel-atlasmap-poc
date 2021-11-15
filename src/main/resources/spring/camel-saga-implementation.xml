@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd          http://camel.apache.org/schema/spring             https://camel.apache.org/schema/spring/camel-spring.xsd">
+    <routeContext id="camelsagaimplementation" xmlns="http://camel.apache.org/schema/spring">
+        <route id="booktickets">
+            <from id="_from1" uri="direct:booktickets"/>
+            <saga id="_saga1">
+                <setHeader headerName="id" id="_setHeader1">
+                    <simple>${random(1,112)}</simple>
+                </setHeader>
+                <setHeader headerName="CamelHttpMethod" id="_setHeader2">
+                    <constant>POST</constant>
+                </setHeader>
+                <setBody id="_setBody1">
+                    <simple>{"id":"${header.id}","mode":"train"}</simple>
+                </setBody>
+                <log id="_log111" message="In Route Block for ROUTE ${routeId} and Executing saga 1st endpoint  ${header.id} and Body is ${body} "/>
+                <to id="_to1" uri="http4://localhost:8082/test/booktrain?bridgeEndpoint=true"/>
+                <setHeader headerName="id" id="_setHeader3">
+                    <simple>${random(1,112)}</simple>
+                </setHeader>
+                <setBody id="_setBody2">
+                    <simple>{"id":"${header.id}","mode":"train"}</simple>
+                </setBody>
+                <log id="_log1111" message="In Route Block for ROUTE ${routeId} and Executing saga 2nd endpoint  ${header.id} and Body is ${body} "/>
+                <to id="_to2" uri="http4://localhost:8082/test/booktrain?bridgeEndpoint=true"/>
+                <setHeader headerName="id" id="_setHeader4">
+                    <simple>${random(1,112)}</simple>
+                </setHeader>
+                <setBody id="_setBody3">
+                    <simple>{"id":"${header.id2}","mode":"plane"}</simple>
+                </setBody>
+                <log id="_log1111" message="In Route Block for ROUTE ${routeId} and Executing saga 3rd endpoint  ${header.id} and Body is ${body} "/>
+                <to id="_to3" uri="http4://localhost:8082/test/bookplane?bridgeEndpoint=true"/>
+            </saga>
+        </route>
+    </routeContext>
+</beans>

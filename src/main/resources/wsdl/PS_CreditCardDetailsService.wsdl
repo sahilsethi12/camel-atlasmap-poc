@@ -1,0 +1,48 @@
+<?xml version= '1.0' encoding= 'UTF-8' ?>
+<wsdl:definitions
+     name="PS_CreditCardDetailsService"
+     targetNamespace="http://hdfcbank.com/soa/CreditCardDetails"
+     xmlns:tns="http://hdfcbank.com/soa/CreditCardDetails"
+     xmlns:inp1="http://hdfcbank.com/soa/CreditCardDetails"
+     xmlns:inp2="http://hdfcbank.com/soa/CreditCardDetails"
+     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://hdfcbank.com/soa/CreditCardDetails" schemaLocation="CreditCardDetailsRequest.xsd"/>
+        </xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://hdfcbank.com/soa/CreditCardDetails" schemaLocation="CreditCardDetailsResponse.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="requestMessage">
+        <wsdl:part name="creditCardDetailsReq" element="tns:CreditCardRequest"/>
+    </wsdl:message>
+    <wsdl:message name="replyMessage">
+        <wsdl:part name="creditCardDetailsResp" element="tns:CreditCardResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="creditCardDetails_ptt">
+        <wsdl:operation name="fetchCreditCardDetails">
+            <wsdl:input message="tns:requestMessage"/>
+            <wsdl:output message="tns:replyMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="creditCardDetails_pttSOAP11Binding" type="tns:creditCardDetails_ptt">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="fetchCreditCardDetails">
+            <soap:operation style="document"
+                            soapAction="http://hdfcbank.com/soa/CreditCardDetails/fetchCreditCardDetails"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="creditCardDetailsReq"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="creditCardDetailsResp"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CreditCardDetailsService">
+    <wsdl:port name="creditCardDetails_pttSOAP11Binding" binding="tns:creditCardDetails_pttSOAP11Binding">
+         <soap:address location="http://localhost:7001/CustomerDetailsServices/ProxyService/PS_CreditCardDetailsService"/>
+      </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
