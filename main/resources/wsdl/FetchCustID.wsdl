@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:inp1="http://hdfcbank.com/soa/FetchCustID" 
+xmlns:inp2="http://hdfcbank.com/soa/FetchCustID" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:tns="http://hdfcbank.com/soa/FetchCustID" name="PS_FethCustomerIDService" targetNamespace="http://hdfcbank.com/soa/FetchCustID">
+    <wsdl:types>
+        <xsd:schema xmlns="http://hdfcbank.com/soa/FetchCustID" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://hdfcbank.com/soa/FetchCustID">
+            <xsd:element name="FetchCustIDRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="Identifiers">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element maxOccurs="unbounded" minOccurs="1" name="IdentifierData">
+                                        <xsd:complexType>
+                                            <xsd:sequence>
+                                                <xsd:element maxOccurs="1" minOccurs="1" name="IdentifierName" type="xsd:string"/>
+                                                <xsd:element maxOccurs="1" minOccurs="1" name="IdentifierValue" type="xsd:string"/>
+                                            </xsd:sequence>
+                                        </xsd:complexType>
+                                    </xsd:element>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+
+        <xsd:schema xmlns="http://hdfcbank.com/soa/FetchCustID" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://hdfcbank.com/soa/FetchCustID">
+            <xsd:element name="FetchCustIDResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="CustomerIDLov">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element maxOccurs="unbounded" name="CUSTOMER_ID" type="xsd:string"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element minOccurs="1" name="RespCode" type="xsd:string"/>
+                        <xsd:element minOccurs="1" name="RespDescription" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+
+    </wsdl:types>
+    <wsdl:message name="requestMessage">
+        <wsdl:part element="tns:FetchCustIDRequest" name="FetchCustIDReq"/>
+    </wsdl:message>
+    <wsdl:message name="replyMessage">
+        <wsdl:part element="tns:FetchCustIDResponse" name="FetchCustIDResp"/>
+    </wsdl:message>
+    <wsdl:portType name="custID_ptt">
+        <wsdl:operation name="fetchCustomerID">
+            <wsdl:input message="tns:requestMessage"/>
+            <wsdl:output message="tns:replyMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="custID_pttSOAP11Binding" type="tns:custID_ptt">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="fetchCustomerID">
+            <soap:operation soapAction="http://hdfcbank.com/soa/FetchCustID/fetchCustomerID" style="document"/>
+            <wsdl:input>
+                <soap:body parts="FetchCustIDReq" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="FetchCustIDResp" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="FetchCustomerIDService">
+        <wsdl:port binding="tns:custID_pttSOAP11Binding" name="custID_pttSOAP11Binding">
+             <soap:address location="https://mock-customer-id-api.apps.hdfc-lab.na-1.rht-labs.com:443/ws/customers"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd          http://camel.apache.org/schema/spring             https://camel.apache.org/schema/spring/camel-spring.xsd">
+	<routeContext id="camelmockendpoints" xmlns="http://camel.apache.org/schema/spring">
+		<route id="cancelPurchase">
+			<from id="_fromcancelpurchase" uri="direct:cancelPurchase" />
+			<transform id="_transform1">
+				<header>body</header>
+			</transform>
+
+			<log id="_log134" message="${header.mode} purchase ${header.id} has been cancelled" />
+		</route>
+
+
+		<route id="direct:payment">
+			<from id="frompayment" uri="direct:payment" />
+			<log id="paymentlog" message="In Route Block for ROUTE ${routeId} and Header is ${header.id} and mode is ${header.mode} " />
+			<choice id="_choice11">
+				<when id="_when11">
+					<simple>${header.id} &gt;= 15 &amp;&amp;  ${header.mode} == 'plane1'</simple>
+					<throwException exceptionType="java.lang.Exception" id="_throwException1" message="Random failure during payment" />
+				</when>
+			</choice>
+			<setBody id="_setBody11">
+				<simple> {"message":"paymet recieved for ${header.mode}"} </simple>
+			</setBody>
+		</route>
+	</routeContext>
+</beans>
