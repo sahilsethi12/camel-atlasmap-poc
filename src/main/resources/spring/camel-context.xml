@@ -13,7 +13,7 @@
         <property name="name" value="CamelServlet"/>
         <property name="servlet" ref="camelHttpTransportServlet"/>
     </bean>
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" streamCache="true">
         <routeContextRef ref="camelsagaimplementation"/>
         <routeContextRef ref="camelmockendpoints"/>
         <onException>
@@ -74,9 +74,24 @@
             <from id="_from3" uri="direct:transformjsontoxml"/>
             <log id="_log11" message="In Route Block for ROUTE ${routeId} "/>
             <log id="_log21" message="The In  Body is ${body}"/>
-            <to id="_to11" uri="atlas:classpath:atlasmap-mapping-customtrans.adm"/>
-            <!--<to id="_to1" uri="atlas:file:/Users/sahilsethi/poc/camel-AtlasMap-poc/src/main/resources/atlasmap-mapping-demo.adm"/> -->
-            <log id="_log31" message="The Out Body is ${body}"/>
+            <setHeader headerName="CamelInfinispanKey" id="_setHeader1">
+                <constant>fileName</constant>
+            </setHeader>
+            <setHeader headerName="CamelInfinispanOperation" id="_setHeader2">
+                <constant>GET</constant>
+            </setHeader>
+            <setProperty id="_setProperty1" propertyName="orgBody">
+                <simple>${body}</simple>
+            </setProperty>
+            <to id="_to4" uri="infinispan://customcache?cacheContainer=#newRemoteCacheManager&amp;resultHeader=LookupResult"/>
+            <log id="beforeinfi" message="Getting Value from Cache and body is ${header.LookupResult} and ${body}"/>
+
+            <!--setBody id="_setBody1">
+                <simple>${exchangeProperty.orgBody}</simple>
+            </setBody>
+            <log id="afterinfi" message="Setting  Value to Original Body and value is ${body}"/>
+            <to id="_to11" uri="atlas:file:/Users/sahilsethi/poc/camel-atlasmap-poc/src/main/resources/atlasmap-mapping-customtrans.adm"/>
+            <log id="_log31" message="The Out Body is ${body}"/> -->
         </route>
     </camelContext>
 </beans>
