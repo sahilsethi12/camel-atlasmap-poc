@@ -9,23 +9,23 @@
 		<property name="name" value="CamelServlet" />
 		<property name="servlet" ref="camelHttpTransportServlet" />
 	</bean>
-	
-		<!-- placeholder configuration -->
 
-    <bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
-      <property name="algorithm" value="PBEWithMD5AndDES" />
-      <property name="passwordEnvName" value="JASYPT_ENCRYPTION_PASSWORD" />
-    </bean>
+	<!-- placeholder configuration -->
 
-    <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
-      <property name="config" ref="environmentVariablesConfiguration" />
-    </bean> 
+	<bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+		<property name="algorithm" value="PBEWithMD5AndDES" />
+		<property name="passwordEnvName" value="JASYPT_ENCRYPTION_PASSWORD" />
+	</bean>
 
-    <bean id="propertyConfigurer" class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer"> 
-      <constructor-arg ref="configurationEncryptor" /> 
-      <property name="location" value="file:/Users/sahilsethi/poc/camel-atlasmap-poc/src/main/resources/application.properties"/>
+	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+		<property name="config" ref="environmentVariablesConfiguration" />
+	</bean>
 
-    </bean>
+	<bean id="propertyConfigurer" class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
+		<constructor-arg ref="configurationEncryptor" />
+		<property name="location" value="file:/Users/sahilsethi/poc/camel-atlasmap-poc/src/main/resources/application.properties" />
+
+	</bean>
 	<camelContext id="camel" streamCache="true" xmlns="http://camel.apache.org/schema/spring">
 		<routeContextRef ref="camelsagaimplementation" />
 		<routeContextRef ref="camelmockendpoints" />
@@ -131,6 +131,16 @@
 			</setHeader>
 			<to id="route-infinispan-cache-lookup" uri="infinispan://customcache?cacheContainer=#newRemoteCacheManager" />
 			<log id="route-log-hit" message="CACHE Updated with ${header.CamelInfinispanKey}" />
+		</route>
+
+
+		<route>
+			<from uri="timer:foo" />
+
+
+			<log message="The Decrypted Properry is {{app.jaspyt.cachekey}}" />
+
+
 		</route>
 	</camelContext>
 </beans>
