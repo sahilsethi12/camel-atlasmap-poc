@@ -24,13 +24,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+
+
+
+
 @SpringBootApplication
+@EnableEncryptableProperties
 @ImportResource({ "classpath:spring/camel-context.xml" })
 public class Application {
 
 	// must have a main method spring-boot can run
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
+
 	}
 
 
@@ -38,6 +45,7 @@ public class Application {
 
 	@Bean(initMethod = "start", destroyMethod = "stop")
     public RemoteCacheManager newRemoteCacheManager() {
+		
         clientBuilder = new ConfigurationBuilder();
 
         clientBuilder.addServer()
@@ -50,10 +58,16 @@ public class Application {
                 .serverName("infinispan")
                 .realm("default")
                 .saslMechanism("DIGEST-MD5");
+        
+        
+        RemoteCacheManager cacheManager = new RemoteCacheManager(clientBuilder.build());                                        
+        
+        cacheManager.administration().removeCache("demo");                                                         
+        cacheManager.administration().getOrCreateCache("demo", "org.infinispan.DIST_ASYNC").put("fileName", "value1");
 
    
 
-        return  new RemoteCacheManager(clientBuilder.build());
+        return   cacheManager;
     }
 
 
